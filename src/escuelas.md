@@ -51,7 +51,7 @@ style.textContent = `
 // document.body.style.paddingLeft = sidebarOffset
 ```
 
-# Escuelas:  agua y comida
+# Escuelas: Agua y comida
 
 El grupo Mi Escuela Saludable compiló datos sobre la calidad del entorno alimentario en escuelas de educación básica a partir de encuestas a madres y padres de los estudiantes.
 
@@ -91,15 +91,6 @@ Plot.plot({
 
 
 
-
-
-
-
-
-
-
-
-
 ```js
 const selected_metric = view(Inputs.select(
   [
@@ -119,21 +110,21 @@ const selected_metric = view(Inputs.select(
 
 
 ```js
-import * as d3 from "npm:d3@5"
+import * as d33 from "npm:d3@5"
 import * as topojson from "npm:topojson-client@3"
 
-const mx = await d3.json(
+const mx = await d33.json(
   "https://gist.githubusercontent.com/leenoah1/535b386ec5f5abdb2142258af395c388/raw/a045778d28609abc036f95702d6a44045ae7ca99/geo-data.json"
 )
 
 const width = 960
 const height = 640
 
-const projection = d3.geoMercator()
+const projection = d33.geoMercator()
   .scale(1800)
   .center([-102, 26])
 
-const path = d3.geoPath().projection(projection)
+const path = d33.geoPath().projection(projection)
 
 const features = topojson.feature(mx, mx.objects.MEX_adm1).features
 
@@ -159,12 +150,12 @@ for (const row of data_melt.filter(d => d.variable === selected_metric)) {
 }
 
 const values = features.map(d => valuesByState.get(lookupState(d.properties.NAME_1)) ?? 0)
-const color = d3.scaleSequential(d3.interpolateBlues)
+const color = d33.scaleSequential(d33.interpolateBlues)
   .domain([0, 1])
 
-const formatPercent = d3.format(".0%")
+const formatPercent = d33.format(".0%")
 
-const svg = d3.create("svg")
+const svg = d33.create("svg")
   .attr("viewBox", `0 0 ${width} ${height}`)
   .attr("width", width)
   .attr("height", height)
@@ -203,4 +194,133 @@ const chart = svg.node()
 ```
 ```js
 chart
+```
+
+# Agua en Chiapas
+
+Por otra parte, el grupo Cántaro Azul se ha dado a la tarea de visitar escuelas de Chiapas y evaluar la calidad de su agua en los últimos años. Abajo puedes ver su trabajo a lo largo del estado.
+
+El agua evaluada con riesgo bajo se considera potable y segurea, mientras que los casos de agua con riesgo alto muestran mayores índices de color, dureza, y la presencia de bacterias colioformes y E. Coli.
+
+```js
+const selected_year_chiapas = view(Inputs.select(
+  [
+    'Todos',2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026
+  ],
+  {label: "Año", value: "Todos", width: 2000}
+))
+```
+
+
+```js
+const data_agua = await FileAttachment("./data/escuelas_agua.csv").csv({typed: true})
+const agua_chiapas = data_agua.filter(d => d.estado === 'Chiapas').filter(d => ["alto","medio","bajo"].includes(d.riesgo)).filter(d => selected_year_chiapas === "Todos" || d.año === selected_year_chiapas)
+```
+
+
+```js
+const agg_riesgo = d3.rollups(
+  agua_chiapas,
+  (v) => v.length,
+  (d) => d['riesgo']
+).map(([riesgo, count]) => ({ riesgo, count }));
+```
+
+```js
+Plot.plot({
+  marginLeft: 150,
+  marginBottom: 50,
+  marks: [
+    Plot.barX(agg_riesgo,
+    {
+      x: "count",
+      y: "riesgo",
+      // fill: "#FEC100"
+    })
+  ],
+  x: { label: "Days without locating" },
+  y: { label: "Count"}
+})
+```
+
+
+```js
+const chiapas = await d33.json(
+  "https://raw.githubusercontent.com/PhantomInsights/mexico-geojson/refs/heads/main/2023/states/Chiapas.json"
+)
+
+const width = 960
+const height = 640
+
+const chiapasFeatureCollection = chiapas.type === "FeatureCollection"
+  ? chiapas
+  : {type: "FeatureCollection", features: [chiapas]}
+
+const features = chiapasFeatureCollection.features
+
+const projection = d33.geoMercator()
+  .fitSize([width, height], chiapasFeatureCollection)
+
+const path = d33.geoPath().projection(projection)
+
+const riskColor = riesgo => {
+  switch ((riesgo || "").toLowerCase()) {
+    case "alto":
+      return "red"
+    case "medio":
+      return "yellow"
+    case "bajo":
+      return "green"
+    default:
+      return "gray"
+  }
+}
+
+const points = agua_chiapas
+  .map(d => {
+    const coords = [+d.longitud, +d.latitud]
+    const point = projection(coords)
+    return { ...d, x: point[0], y: point[1] }
+  })
+  .filter(d => Number.isFinite(d.x) && Number.isFinite(d.y))
+
+const tooltipText = d =>
+  Object.entries(d)
+    .filter(([key]) => key !== "x" && key !== "y")
+    .map(([key, value]) => `${key}: ${value}`)
+    .join("\n")
+
+const svg = d33.create("svg")
+  .attr("viewBox", `0 0 ${width} ${height}`)
+  .attr("width", width)
+  .attr("height", height)
+  .attr("preserveAspectRatio", "xMidYMid meet")
+  .style("max-width", "100%")
+  .style("display", "block")
+
+svg.selectAll("path")
+  .data(features)
+  .join("path")
+  .attr("d", path)
+  .attr("fill", "transparent")
+  .attr("stroke", "black")
+  .attr("stroke-width", 0.5)
+
+svg.selectAll("circle")
+  .data(points)
+  .join("circle")
+  .attr("cx", d => d.x)
+  .attr("cy", d => d.y)
+  .attr("r", 5)
+  .attr("fill", d => riskColor(d.riesgo))
+  .attr("stroke", "black")
+  .attr("stroke-width", 0.8)
+  .attr("opacity", 0.9)
+  .append("title")
+  .text(tooltipText)
+
+const chart_chiapas = svg.node()
+```
+```js
+chart_chiapas
 ```
