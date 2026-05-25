@@ -5,4 +5,4 @@ Entra al enlace para conocer nuestro portal con los retos que enfrentan las niñ
 
 https://hector-garrido.github.io/redim-hackaton-2026/
 
-<img src="readme_image.png" width="100%" />
+<img src="readme_image.png" width="70%" />
