@@ -53,13 +53,12 @@ style.textContent = `
 
 # Desapariciones en Chiapas
 
-Estoy escribiendo mi primera página del framework y quiero sentir la reactividad
-desde el minuto uno.
+Los grupos Red por los Derechos de las Infancias y Adolescencias en Chiapas (REDIAS) y Melel Xojobal se dieron a la tarea de recopilar fichas de búsqueda de NNA desaparecidos en Chiapas entre 2019 y 2026. A continuación mostramos algunos de los datos que encontraron para entender mejor este problema, ayudar a los desaparecidos a volver a casa, y buscar que no se repita.
 
 ```js
 const selected_group = view(Inputs.select(
   ["Todos", "indígena", "mestiza"],
-  {label: "Sexo", value: "Todos"}
+  {label: "Grupo", value: "Todos"}
 ))
 
 
@@ -118,7 +117,7 @@ Plot.plot({
 })
 ```
 
-De los desaparecidos registrados, 7/10 han sido encontrados...
+De los desaparecidos registrados, 7/10 han sido encontrados, mientras que casi todos los demás continúan sin ser localizados. Del total, 8 fueron encontrados sin vida...
 
 ```js
 const agg_estatus = d3.rollups(
@@ -182,5 +181,6 @@ Plot.plot({
 })
 ```
 
-Los NNA indígenas representan casi 2/5 de todos los NNA desaparecidos. Sin embargo, La población indígena representa 1/4 de la población total. Esto quiere decir que los NNA son 50% más vulnerables a desapariciones a comparación del resto de la población.
+Los NNA indígenas representan casi 2/5 de todos los NNA desaparecidos. Sin embargo, La población indígena representa 1/4 de la población total. Esto quiere decir que los NNA indígenqasson 50% más vulnerables a desapariciones a comparación del resto de la población.
+
 ¿Quieres ver los datos del sitio con información únicamente de NNA indígenas? ¡Puedes hacerlo! Solo ve hasta el inicio de la página, y escoge el grupo en el menú desplegable.

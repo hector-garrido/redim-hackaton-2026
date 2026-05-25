@@ -53,7 +53,13 @@ style.textContent = `
 
 # Escuelas: Agua y comida
 
+México, si bien es reconocido en todo el mundo por su grandiosa comida, llena de sabores y diversidad, también es conocido por tener problemas de mala alimentación en términos de obesidad y consumo de comida chatarra. Como lo que no se mide no se puede mejorar, varios grupos de la REDIM se dieron a la tarea de echar un vistazo.
+
+## Calidad de los alimentos
+
 El grupo Mi Escuela Saludable compiló datos sobre la calidad del entorno alimentario en escuelas de educación básica a partir de encuestas a madres y padres de los estudiantes.
+
+Revisando los datos, destaca que la gran mayoría de los espacios venden comida chatarra a lo largo de la semana, mientras que las frutas, verduras, cereales y semillas son mucho menos comunes.
 
 ```js
 const selected_group = view(Inputs.select(
@@ -196,7 +202,7 @@ const chart = svg.node()
 chart
 ```
 
-# Agua en Chiapas
+## Agua en Chiapas
 
 Por otra parte, el grupo Cántaro Azul se ha dado a la tarea de visitar escuelas de Chiapas y evaluar la calidad de su agua en los últimos años. Abajo puedes ver su trabajo a lo largo del estado.
 
